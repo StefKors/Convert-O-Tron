@@ -72,31 +72,42 @@ class MarkdownGenerator {
         depth = depth - 1
     }
 
+    fileprivate func wrapInHeading(_ element: OPMLElement, _ text: String) -> String {
+        // Handle outline depth
+        if element.name == .outline {
+            // Headings 2 - 6
+            if depth < 6 {
+                let heading = String(repeating: "#", count: depth)
+                return "#\(heading) \(text)"
+            } else {
+                // Indent if more than H6
+                let indent = String(repeating: "\t", count: depth - 5)
+                return "\(indent)- \(text)"
+            }
+        }
+
+        return text
+    }
+
+    fileprivate func wrapInLink(_ element: OPMLElement, _ text: String) -> String {
+        // Handle link
+        if let type = element.attributes[.type],
+           type == "link",
+           let url = element.attributes[.url] {
+            return "[\(text)](\(url))"
+        }
+
+        return text
+    }
+
     private func applyAttributes(element: OPMLElement) -> String? {
         if let isComment = element.attributes[.isComment], isComment == "true" {
             return nil
         }
         guard var text = element.attributes[.text]?.trimmingCharacters(in: .whitespacesAndNewlines) else { return "" }
 
-        // Handle outline depth
-        if element.name == .outline {
-            // Headings 2 - 6
-            if depth < 6 {
-                let heading = String(repeating: "#", count: depth)
-                text = "#\(heading) \(text)"
-            } else {
-                // Indent if more than H6
-                let indent = String(repeating: "\t", count: depth - 5)
-                text = "\(indent)- \(text)"
-            }
-        }
-
-        // Handle link
-        if let type = element.attributes[.type],
-           type == "link",
-           let url = element.attributes[.url] {
-            text = "[\(text)](\(url))"
-        }
+        text = wrapInLink(element, text)
+        text = wrapInHeading(element, text)
 
         return text
     }

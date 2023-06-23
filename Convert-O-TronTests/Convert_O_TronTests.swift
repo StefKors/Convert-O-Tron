@@ -250,4 +250,40 @@ final class Convert_O_TronTests: XCTestCase {
         }
     }
 
+    func testLinkHeading() throws {
+        let input = """
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<opml version="2.0">
+  <head>
+    <title>Heading 1</title>
+  </head>
+  <body>
+    <outline text="Heading 2" type="link" url="http://google.com">
+    </outline>
+  </body>
+</opml>
+
+"""
+
+        let result = OPMLParser().parse(string: input)
+        XCTAssertNotNil(result)
+        if let result {
+            let markdown = MarkdownGenerator().start(document: result)
+            XCTAssert(!markdown.content.isEmpty)
+            XCTAssertEqual(markdown.title, "Heading 1")
+
+            let expectedResult = """
+# Heading 1
+## [Heading 2](http://google.com)
+"""
+
+            XCTAssertEqual(
+                markdown.content.trimmingCharacters(in: .whitespacesAndNewlines),
+                expectedResult.trimmingCharacters(in: .whitespacesAndNewlines)
+            )
+        } else {
+            XCTFail()
+        }
+    }
+
 }
