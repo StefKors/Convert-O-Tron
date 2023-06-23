@@ -124,8 +124,8 @@ final class Convert_O_TronTests: XCTestCase {
             let markdown = MarkdownGenerator().start(document: result)
             XCTAssert(!markdown.content.isEmpty)
             XCTAssertEqual(markdown.title, "states.opml")
-            XCTAssertEqual(markdown.dateCreated?.timeIntervalSince1970, 1110904545)
-            XCTAssertEqual(markdown.dateModified?.timeIntervalSince1970, 1121384465)
+            XCTAssertEqual(markdown.dateCreated.timeIntervalSince1970, 1110904545)
+            XCTAssertEqual(markdown.dateModified.timeIntervalSince1970, 1121384465)
         } else {
             XCTFail()
         }
