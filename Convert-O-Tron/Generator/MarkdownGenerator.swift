@@ -73,7 +73,9 @@ class MarkdownGenerator {
     }
 
     private func applyAttributes(element: OPMLElement) -> String? {
-        guard let isComment = element.attributes[.isComment], isComment == "true" else { return nil }
+        if let isComment = element.attributes[.isComment], isComment == "true" {
+            return nil
+        }
         guard var text = element.attributes[.text]?.trimmingCharacters(in: .whitespacesAndNewlines) else { return "" }
 
         // Handle outline depth
