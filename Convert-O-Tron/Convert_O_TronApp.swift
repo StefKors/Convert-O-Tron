@@ -10,20 +10,21 @@ import UniformTypeIdentifiers
 
 @main
 struct Convert_O_TronApp: App {
-    @StateObject private var model = Model()
+    @StateObject private var dropWindowModel = Model()
+    @StateObject private var debugWindowModel = Model()
 
     var body: some Scene {
         WindowGroup {
             ContentView()
-                .environmentObject(model)
-                .onDrop(of: [.opml, .fileURL], delegate: DropHandler(isDropping: $model.isDropping, isValidFileType: $model.isValidFileType, callback: model.handleOnDrop))
+                .environmentObject(dropWindowModel)
+                .onDrop(of: [.opml, .fileURL], delegate: DropHandler(isDropping: $dropWindowModel.isDropping, isValidFileType: $dropWindowModel.isValidFileType, callback: dropWindowModel.handleOnDrop))
         }
         .windowResizability(.contentMinSize)
 
         WindowGroup(id: "debug-window") {
             DebugWindowContentView()
-                .environmentObject(model)
-                .onDrop(of: [.opml, .fileURL], delegate: DropHandler(isDropping: $model.isDropping, isValidFileType: $model.isValidFileType, callback: model.handleOnDrop))
+                .environmentObject(debugWindowModel)
+                .onDrop(of: [.opml, .fileURL], delegate: DropHandler(isDropping: $debugWindowModel.isDropping, isValidFileType: $debugWindowModel.isValidFileType, callback: debugWindowModel.handleOnDrop))
         }
         .windowStyle(.titleBar)
         .windowToolbarStyle(.unified(showsTitle: true))
